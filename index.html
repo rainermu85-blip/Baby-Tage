@@ -2,16 +2,18 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Baby Tage</title>
+<title>Baby Lebenstage</title>
 
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;
 font-family:system-ui;background:#0b1220;color:#e5e7eb}
 .card{background:#111827;padding:24px;border-radius:16px;
-width:90%;max-width:420px}
-.big{font-size:32px;font-weight:800}
-button,input{margin-top:12px;padding:10px;border-radius:10px;font-size:16px}
-button{background:#2563eb;color:white;border:0}
+width:90%;max-width:420px;text-align:center}
+.big{font-size:32px;font-weight:800;line-height:1.2}
+.sub{margin-top:8px;color:#9ca3af;font-size:18px}
+button,input{margin-top:12px;padding:12px;border-radius:10px;font-size:16px;width:100%;box-sizing:border-box}
+button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
+#reset{margin-top:20px;font-size:13px;color:#4b5563;cursor:pointer;text-decoration:underline}
 </style>
 
 <div class="card">
@@ -26,12 +28,17 @@ const o=document.getElementById("out");
 const d=document.getElementById("d");
 const b=document.getElementById("b");
 
-function days(birth){
+function getLifeDay(birth){
   const ms=86400000;
   const t=new Date();
+  // Normierung auf Mitternacht für exakte Tagesberechnung
   const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
   const bd=new Date(birth);
-  return Math.floor((today-bd)/ms)+1;
+  const birthDayNormalized=new Date(bd.getFullYear(),bd.getMonth(),bd.getDate());
+  
+  // (Heute - Geburtstag) / Millisekunden pro Tag + 1
+  // Beispiel: Heute geboren -> 0 Tage Differenz + 1 = 1. Lebenstag
+  return Math.floor((today-birthDayNormalized)/ms)+1;
 }
 
 function show(){
@@ -41,8 +48,18 @@ function show(){
     d.style.display=b.style.display="block";
     return;
   }
-  const n=days(v);
-  o.innerHTML=`<div class="big">Dein Baby ist heute<br>${n} Tage alt.</div>`;
+  const n=getLifeDay(v);
+  o.innerHTML=`
+    <div class="sub">Heute ist der</div>
+    <div class="big">${n}. Lebenstag</div>
+    <div class="sub">deines Babys</div>
+    <div id="reset">Datum ändern</div>
+  `;
+
+  document.getElementById("reset").onclick=()=>{
+    localStorage.removeItem(k);
+    location.reload();
+  };
 }
 
 b.onclick=()=>{
@@ -55,4 +72,3 @@ b.onclick=()=>{
 show();
 </script>
 </html>
-
