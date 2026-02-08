@@ -1,21 +1,85 @@
 <!doctype html>
 <html lang="de">
+<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>Baby Lebenstage</title>
 
-<style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;
-font-family:system-ui;background:#0b1220;color:#e5e7eb}
-.card{background:#111827;padding:24px;border-radius:16px;
-width:90%;max-width:420px;text-align:center}
-.big{font-size:32px;font-weight:800;line-height:1.2}
-.sub{margin-top:8px;color:#9ca3af;font-size:18px}
-button,input{margin-top:12px;padding:12px;border-radius:10px;font-size:16px;width:100%;box-sizing:border-box}
-button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
-#reset{margin-top:20px;font-size:13px;color:#4b5563;cursor:pointer;text-decoration:underline}
-</style>
+<link rel="manifest" href='data:application/json,{"name":"Baby Lebenstage","short_name":"Lebenstage","display":"standalone","start_url":".","background_color":"#0b1220","theme_color":"#0b1220"}'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #0b1220;
+    color: #e5e7eb;
+    overflow: hidden;
+  }
+  .card {
+    background: #111827;
+    padding: 40px 24px;
+    border-radius: 24px;
+    width: 85%;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+    border: 1px solid #1f2937;
+  }
+  .big {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    color: #60a5fa;
+    margin: 15px 0;
+  }
+  .sub {
+    color: #9ca3af;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  input, button {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  input {
+    background: #1f2937;
+    border: 1px solid #374151;
+    color: white;
+    text-align: center;
+  }
+  button {
+    background: #2563eb;
+    color: white;
+    border: 0;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+  #reset {
+    margin-top: 30px;
+    font-size: 11px;
+    color: #4b5563;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+  }
+</style>
+</head>
+
+<body>
 <div class="card">
   <div id="out"></div>
   <input id="d" type="date" style="display:none">
@@ -23,52 +87,60 @@ button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
 </div>
 
 <script>
-const k="babydate";
-const o=document.getElementById("out");
-const d=document.getElementById("d");
-const b=document.getElementById("b");
+const k = "baby_life_date"; // Eigener Key für die neue Logik
+const o = document.getElementById("out");
+const d = document.getElementById("d");
+const b = document.getElementById("b");
 
-function getLifeDay(birth){
-  const ms=86400000;
-  const t=new Date();
-  // Normierung auf Mitternacht für exakte Tagesberechnung
-  const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
-  const bd=new Date(birth);
-  const birthDayNormalized=new Date(bd.getFullYear(),bd.getMonth(),bd.getDate());
+function getLifeDay(birthDateString) {
+  const now = new Date();
+  // Wir setzen heute auf 00:00:00 Uhr
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
-  // (Heute - Geburtstag) / Millisekunden pro Tag + 1
-  // Beispiel: Heute geboren -> 0 Tage Differenz + 1 = 1. Lebenstag
-  return Math.floor((today-birthDayNormalized)/ms)+1;
+  const birth = new Date(birthDateString);
+  // Wir setzen den Geburtstag auf 00:00:00 Uhr
+  const birthDay = new Date(birth.getFullYear(), birth.getMonth(), birth.getDate());
+  
+  const diffTime = today - birthDay;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  // Lebenstag = Differenz + 1 (Tag der Geburt ist Tag 1)
+  return diffDays + 1;
 }
 
-function show(){
-  const v=localStorage.getItem(k);
-  if(!v){
-    o.textContent="Geburtsdatum eingeben:";
-    d.style.display=b.style.display="block";
+function render() {
+  const savedDate = localStorage.getItem(k);
+  
+  if (!savedDate) {
+    o.innerHTML = "<div class='sub'>Geburtstag wählen:</div>";
+    d.style.display = b.style.display = "block";
     return;
   }
-  const n=getLifeDay(v);
-  o.innerHTML=`
+
+  const day = getLifeDay(savedDate);
+  o.innerHTML = `
     <div class="sub">Heute ist der</div>
-    <div class="big">${n}. Lebenstag</div>
-    <div class="sub">deines Babys</div>
-    <div id="reset">Datum ändern</div>
+    <div class="big">${day}.</div>
+    <div class="sub">Lebenstag</div>
+    <div id="reset">Datum korrigieren</div>
   `;
 
-  document.getElementById("reset").onclick=()=>{
-    localStorage.removeItem(k);
-    location.reload();
+  document.getElementById("reset").onclick = () => {
+    if(confirm("Datum wirklich ändern?")) {
+      localStorage.removeItem(k);
+      location.reload();
+    }
   };
 }
 
-b.onclick=()=>{
-  if(d.value){
-    localStorage.setItem(k,d.value);
+b.onclick = () => {
+  if (d.value) {
+    localStorage.setItem(k, d.value);
     location.reload();
   }
 };
 
-show();
+render();
 </script>
+</body>
 </html>
