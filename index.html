@@ -1,8 +1,14 @@
 <!doctype html>
 <html lang="de">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Baby Lebenstage</title>
+
+<link rel="manifest" href='data:application/json,{"name":"Baby Lebenstage","short_name":"Lebenstage","display":"standalone","start_url":".","background_color":"#0b1220","theme_color":"#0b1220","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+</head>
 
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;
@@ -31,13 +37,9 @@ const b=document.getElementById("b");
 function getLifeDay(birth){
   const ms=86400000;
   const t=new Date();
-  // Normierung auf Mitternacht für exakte Tagesberechnung
   const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
   const bd=new Date(birth);
   const birthDayNormalized=new Date(bd.getFullYear(),bd.getMonth(),bd.getDate());
-  
-  // (Heute - Geburtstag) / Millisekunden pro Tag + 1
-  // Beispiel: Heute geboren -> 0 Tage Differenz + 1 = 1. Lebenstag
   return Math.floor((today-birthDayNormalized)/ms)+1;
 }
 
@@ -71,4 +73,4 @@ b.onclick=()=>{
 
 show();
 </script>
- </html>
+</html>
