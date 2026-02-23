@@ -1,0 +1,17 @@
+{
+  "name": "Baby Lebenstage",
+  "short_name": "Lebenstage",
+  "display": "standalone",
+  "start_url": "/Baby-Tage/",
+  "scope": "/Baby-Tage/",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    {
+      "src": "/Baby-Tage/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
