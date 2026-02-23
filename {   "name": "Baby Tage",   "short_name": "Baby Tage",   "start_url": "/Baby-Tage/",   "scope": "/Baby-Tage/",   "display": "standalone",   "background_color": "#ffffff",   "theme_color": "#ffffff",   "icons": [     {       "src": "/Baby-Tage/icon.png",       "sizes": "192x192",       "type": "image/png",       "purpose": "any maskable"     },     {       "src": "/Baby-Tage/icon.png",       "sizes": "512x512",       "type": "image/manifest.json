@@ -1,0 +1,23 @@
+{
+  "name": "Baby Tage",
+  "short_name": "Baby Tage",
+  "start_url": "/Baby-Tage/",
+  "scope": "/Baby-Tage/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/Baby-Tage/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Baby-Tage/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
