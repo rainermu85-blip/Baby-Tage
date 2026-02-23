@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baby Lebenstage</title>
+<link rel="manifest" href="/Baby-Tage/manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1220">
+</head>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;
+font-family:system-ui;background:#0b1220;color:#e5e7eb}
+.card{background:#111827;padding:24px;border-radius:16px;
+width:90%;max-width:420px;text-align:center}
+.big{font-size:32px;font-weight:800;line-height:1.2}
+.sub{margin-top:8px;color:#9ca3af;font-size:18px}
+button,input{margin-top:12px;padding:12px;border-radius:10px;font-size:16px;width:100%;box-sizing:border-box}
+button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
+#reset{margin-top:20px;font-size:13px;color:#4b5563;cursor:pointer;text-decoration:underline}
+</style>
+<div class="card">
+  <div id="out"></div>
+  <input id="d" type="date" style="display:none">
+  <button id="b" style="display:none">Speichern</button>
+</div>
+<script>
+const k="babydate";
+const o=document.getElementById("out");
+const d=document.getElementById("d");
+const b=document.getElementById("b");
+function getLifeDay(birth){
+  const ms=86400000;
+  const t=new Date();
+  const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  const bd=new Date(birth);
+  const birthDayNormalized=new Date(bd.getFullYear(),bd.getMonth(),bd.getDate());
+  return Math.floor((today-birthDayNormalized)/ms)+1;
+}
+function show(){
+  const v=localStorage.getItem(k);
+  if(!v){
+    o.textContent="Geburtsdatum eingeben:";
+    d.style.display=b.style.display="block";
+    return;
+  }
+  const n=getLifeDay(v);
+  o.innerHTML=`
+    <div class="sub">Heute ist der</div>
+    <div class="big">${n}. Lebenstag</div>
+    <div class="sub">deines Babys</div>
+    <div id="reset">Datum ändern</div>
+  `;
+  document.getElementById("reset").onclick=()=>{
+    localStorage.removeItem(k);
+    location.reload();
+  };
+}
+b.onclick=()=>{
+  if(d.value){
+    localStorage.setItem(k,d.value);
+    location.reload();
+  }
+};
+show();
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/Baby-Tage/sw.js');
+}
+</script>
+</html>
