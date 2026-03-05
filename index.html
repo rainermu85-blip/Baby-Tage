@@ -62,7 +62,7 @@ function show(){
   const n=getLifeDay(v);
   const{wochen,restTageW,monate,restTageM}=getAgeDetails(v);
   const wText=`<span>${wochen} Wochen</span> und <span>${restTageW} Tag${restTageW!==1?'e':''}</span>`;
-  const mText=`<span>${monate} Monat${monate!==1?'e':''}</span> und <span>${restTageM} Tag${restTageM!==1?'e':''}</span>`;
+  const mText=`<span>${monate} Monat${monate!==1?'en':''}</span> und <span>${restTageM} Tag${restTageM!==1?'e':''}</span>`;
   o.innerHTML=`
     <div class="sub">Heute ist der</div>
     <div class="big">${n}. Lebenstag</div>
