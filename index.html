@@ -16,9 +16,11 @@ font-family:system-ui;background:#0b1220;color:#e5e7eb}
 width:90%;max-width:420px;text-align:center}
 .big{font-size:32px;font-weight:800;line-height:1.2}
 .sub{margin-top:8px;color:#9ca3af;font-size:18px}
+.alt{margin-top:16px;color:#9ca3af;font-size:14px;line-height:1.6}
+.alt span{}
 button,input{margin-top:12px;padding:12px;border-radius:10px;font-size:16px;width:100%;box-sizing:border-box}
 button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
-#reset{margin-top:20px;font-size:13px;color:#4b5563;cursor:pointer;text-decoration:underline}
+#reset{margin-top:16px;font-size:13px;color:#4b5563;cursor:pointer;text-decoration:underline}
 </style>
 <div class="card">
   <div id="out"></div>
@@ -38,6 +40,18 @@ function getLifeDay(birth){
   const birthDayNormalized=new Date(bd.getFullYear(),bd.getMonth(),bd.getDate());
   return Math.floor((today-birthDayNormalized)/ms)+1;
 }
+function getAgeDetails(birth){
+  const totalDays=getLifeDay(birth)-1;
+  const wochen=Math.floor(totalDays/7);
+  const restTageW=totalDays%7;
+  const bd=new Date(birth);
+  const t=new Date();
+  const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  let monate=today.getFullYear()*12+today.getMonth()-(bd.getFullYear()*12+bd.getMonth());
+  let restTageM=today.getDate()-bd.getDate();
+  if(restTageM<0){monate--;const prev=new Date(today.getFullYear(),today.getMonth(),0);restTageM+=prev.getDate();}
+  return{wochen,restTageW,monate,restTageM};
+}
 function show(){
   const v=localStorage.getItem(k);
   if(!v){
@@ -46,10 +60,14 @@ function show(){
     return;
   }
   const n=getLifeDay(v);
+  const{wochen,restTageW,monate,restTageM}=getAgeDetails(v);
+  const wText=`<span>${wochen} Wochen</span> und <span>${restTageW} Tag${restTageW!==1?'e':''}</span>`;
+  const mText=`<span>${monate} Monat${monate!==1?'e':''}</span> und <span>${restTageM} Tag${restTageM!==1?'e':''}</span>`;
   o.innerHTML=`
     <div class="sub">Heute ist der</div>
     <div class="big">${n}. Lebenstag</div>
     <div class="sub">deines Babys</div>
+    <div class="alt">Das entspricht ${wText}<br>oder ${mText}</div>
     <div id="reset">Datum ändern</div>
   `;
   document.getElementById("reset").onclick=()=>{
